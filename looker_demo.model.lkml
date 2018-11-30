@@ -24,7 +24,8 @@ explore: policy {
   #Exclude converted policies
   sql_always_where: ${policy_current_status.description} NOT IN ('Pending','Archived Quote','Denied')
     AND ${policy.is_converted_policy} <> 'Yes'
-    AND ${policy.current_policy} IS NOT NULL ;;
+    AND ${policy.current_policy} IS NOT NULL
+    AND ${company_state_lob.state} = 'WV' ;;
 
     join: policy_current_status {
       view_label: "Policy"
@@ -153,43 +154,87 @@ explore: policy {
     }
 
 
-#STOP HERE
+    join: policy_location {
+      view_label: "Location"
+      type: left_outer
+      sql_on: ${policy_image.policy_id} = ${policy_location.policy_id}
+        AND ${policy_image.policyimage_num} = ${policy_location.policyimage_num}
+        AND ${policy_location.detailstatuscode_id} = 1 ;;
+      relationship: one_to_many
+    }
 
-#WORK on LOSS RATIO
+    join: policy_construction_type {
+      view_label: "Location"
+      type: inner
+      sql_on: ${policy_location.contructiontype_id} = ${policy_construction_type.constructiontype_id} ;;
+      relationship: one_to_one
+    }
 
-#   join:  claim_control {
-#     view_label: "Claim"
-#     fields: [claim_control.claim_number,claim_control.loss_date_date,claim_control.count,claim_control.count_with_expense_paid,claim_control.count_with_indemnity_paid,
-#       claim_control.reported_date_date,claim_control.dscr]
-#     type: left_outer
-#     relationship: one_to_many
-#     sql_on: ${policy.policy_id} = ${claim_control.policy_id}  ;;
-#   }
-
-#   join: v_claim_detail_claimant {
-#     view_label: "Claimant"
+#   join: v_program_type {
+#     view_label: "Location"
 #     type: inner
-#     relationship: one_to_many
-#     sql_on: ${claim_control.claimcontrol_id} = ${v_claim_detail_claimant.claimcontrol_id} ;;
-#   }
-#
-#   join: claimant {
-#     view_label: "Claimant"
-#     type: inner
-#     relationship: one_to_many
-#     sql_on: ${claim_control.claimcontrol_id} = ${claimant.claimcontrol_id} ;;
-#   }
-#
-#   join: v_claim_detail_feature {
-#     view_label: "Claim"
-#     type: left_outer
-#     relationship: one_to_many
-#     sql_on: ${v_claim_detail_claimant.claimcontrol_id} = ${v_claim_detail_feature.claimcontrol_id}
-#               AND ${v_claim_detail_claimant.claimant_num} = ${v_claim_detail_feature.claimant_num}
-#               ;;
+#     sql_on: ${location.programtype_id} = ${v_program_type.programtype_id} ;;
+#     relationship: one_to_one
 #   }
 
+    join: policy_roof_type {
+      view_label: "Location"
+      type: inner
+      sql_on: ${policy_location.rooftype_id} = ${policy_roof_type.rooftype_id} ;;
+      relationship: one_to_one
+    }
 
+    join: policy_number_of_stories {
+      view_label: "Location"
+      type: inner
+      sql_on: ${policy_location.numberofstoriestype_id} = ${policy_number_of_stories.numberofstoriestype_id} ;;
+      relationship: one_to_one
+    }
+
+    join: policy_chimneys_type {
+      view_label: "Location"
+      type: inner
+      sql_on: ${policy_location.numberofchimneystype_id} = ${policy_chimneys_type.numberofchimneystype_id} ;;
+      relationship: one_to_one
+    }
+
+
+    #
+    # CLAIMS SECTION
+    #
+
+    join:  claim_control {
+      view_label: "Claim"
+      fields: [claim_control.claim_number, claim_control.loss_date_date, claim_control.count, claim_control.count_with_expense_paid,
+        claim_control.count_with_indemnity_paid, claim_control.reported_date_date, claim_control.dscr]
+      type: left_outer
+      relationship: one_to_many
+      sql_on: ${policy.policy_id} = ${claim_control.policy_id}  ;;
+    }
+
+    join: v_claim_detail_claimant {
+      view_label: "Claimant"
+      type: inner
+      relationship: one_to_many
+      sql_on: ${claim_control.claimcontrol_id} = ${v_claim_detail_claimant.claimcontrol_id} ;;
+      fields: [v_claim_detail_claimant.claimcontrol_id, v_claim_detail_claimant.claimant_num, v_claim_detail_claimant.display_name,
+        v_claim_detail_claimant.in_litigation, v_claim_detail_claimant.claimanttypedscr, v_claim_detail_claimant.relationshiptypedscr,
+        v_claim_detail_claimant.status_dscr, v_claim_detail_claimant.is_litigated_represented]
+    }
+
+    join: v_claim_detail_feature {
+      view_label: "Claim Feature"
+      type: left_outer
+      relationship: one_to_many
+      sql_on: ${v_claim_detail_claimant.claimcontrol_id} = ${v_claim_detail_feature.claimcontrol_id}
+              AND ${v_claim_detail_claimant.claimant_num} = ${v_claim_detail_feature.claimant_num}
+              ;;
+      fields: [v_claim_detail_feature.exposure_dscr, v_claim_detail_feature.subexposure_dscr, v_claim_detail_feature.coverage_dscr,
+        v_claim_detail_feature.subcoverage_dscr, v_claim_detail_feature.status_dscr, v_claim_detail_feature.denied,
+        v_claim_detail_feature.indemnity_paid, v_claim_detail_feature.expense_paid, v_claim_detail_feature.count,
+        v_claim_detail_feature.sum_indemnity_reserve, v_claim_detail_feature.sum_indemnity_paid, v_claim_detail_feature.sum_expense_reserve,
+        v_claim_detail_feature.sum_expense_paid, v_claim_detail_feature.sum_alae_reserve, v_claim_detail_feature.sum_alae_paid]
+    }
 
 #   join:  additional_interest {
 #     view_label: "Additional Interest"
@@ -213,48 +258,6 @@ explore: policy {
 #     sql_on: ${additional_interest_list_name_link.nameaddresssource_id} = ${name.nameaddresssource_id}
 #       and ${additional_interest_list_name_link.name_id} = ${name.name_id};;
 #   }
-#
-#   join: location {
-#     view_label: "Location"
-#     type: left_outer
-#     sql_on: ${policy_image.policy_id} = ${location.policy_id} AND ${policy_image.policyimage_num} = ${location.policyimage_num} AND ${location.detailstatuscode_id} = 1 ;;
-#     relationship: one_to_many
-#   }
-
-#   join: v_construction_type {
-#     view_label: "Location"
-#     type: inner
-#     sql_on: ${location.contructiontype_id} = ${v_construction_type.constructiontype_id} ;;
-#     relationship: one_to_one
-#   }
-
-#   join: v_program_type {
-#     view_label: "Location"
-#     type: inner
-#     sql_on: ${location.programtype_id} = ${v_program_type.programtype_id} ;;
-#     relationship: one_to_one
-#   }
-
-#   join: v_roof_type {
-#     view_label: "Location"
-#     type: inner
-#     sql_on: ${location.rooftype_id} = ${v_roof_type.rooftype_id} ;;
-#     relationship: one_to_one
-#   }
-
-#   join: v_number_of_stories {
-#     view_label: "Location"
-#     type: inner
-#     sql_on: ${location.numberofstoriestype_id} = ${v_number_of_stories.numberofstoriestype_id} ;;
-#     relationship: one_to_one
-#   }
-
-#   join: number_of_chimneys_type {
-#     view_label: "Location"
-#     type: inner
-#     sql_on: ${location.numberofchimneystype_id} = ${number_of_chimneys_type.numberofchimneystype_id} ;;
-#     relationship: one_to_one
-#   }
 
 #   # - join: location_name_link
 #   #   type: inner
@@ -270,13 +273,6 @@ explore: policy {
 #     type: inner
 #     sql_on: ${location.policy_id} = ${location_address_link.policy_id} AND ${location.policyimage_num} = ${location_address_link.policyimage_num} AND ${location.location_num} = ${location_address_link.location_num} ;;
 #     relationship: one_to_many
-#   }
-#
-#   join: location_address {
-#     view_label: "Location"
-#     type: inner
-#     sql_on: ${location_address_link.address_id} = ${location_address.address_id} ;;
-#     relationship: one_to_one
 #   }
 #
 #   join: coverage {
