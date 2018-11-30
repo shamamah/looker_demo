@@ -34,13 +34,13 @@ view: v_claim_detail_feature {
   #---------------------------------------------------------------
 
   dimension: exposure_dscr {
-    label: "Exposure Description"
+    label: "Exposure"
     type: string
     sql: ${TABLE}.exposure_dscr ;;
   }
 
   dimension: subexposure_dscr {
-    label: "Subexposure Description"
+    label: "Exposure Detail"
     type: string
     sql: ${TABLE}.subexposure_dscr ;;
   }
@@ -51,11 +51,11 @@ view: v_claim_detail_feature {
     sql: ${TABLE}.coverage_dscr ;;
   }
 
-  # dimension: subcoverage_dscr {
-  #   label: "Subcoverage Description"
-  #   type: string
-  #   sql: ${TABLE}.subcoverage_dscr ;;
-  # }
+  dimension: subcoverage_dscr {
+    label: "Coverage Detail"
+    type: string
+    sql: ${TABLE}.subcoverage_dscr ;;
+  }
 
   # dimension: record_only {
   #   type: string
@@ -258,11 +258,11 @@ view: v_claim_detail_feature {
   #   sql: ${TABLE}.claimdenialreason_remarks ;;
   # }
 
-  # dimension: denied {
-  #   type: string
-  #   label: "Is Denied"
-  #   sql: case when ${TABLE}.denied=1 then 'Yes' else 'No' end ;;
-  # }
+  dimension: denied {
+    type: string
+    label: "Is Denied"
+    sql: case when ${TABLE}.denied=1 then 'Yes' else 'No' end ;;
+  }
 
   # dimension_group: claimdenial_date {
   #   label: "Claim Denial"
@@ -458,8 +458,20 @@ view: v_claim_detail_feature {
     value_format_name: usd
   }
 
+#   measure: loss_ratio  {
+#     type: number
+#     value_format: "#\%"
+#     label: "Loss Ratio2"
+#     sql:  (${sum_alae_paid} + ${sum_alae_reserve} + ${sum_expense_paid} + ${sum_expense_reserve} + ${sum_indemnity_paid} + ${sum_indemnity_reserve}) / ${policy_image.premium_chg_written_sum} ;;
+#   }
+
   set: feature_stats {
     fields: [
+      claim_control.claim_number,
+      claim_control.dscr,
+      claimant_num,
+      claimfeature_num,
+      claimcoverage_num,
       exposure_dscr,
       coveragecode,
       coverage_dscr,

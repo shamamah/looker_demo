@@ -185,14 +185,14 @@ view: claim_control {
   # }
 
   dimension: claimlnimage_num {
-    type: number
     hidden: yes
+    type: number
     sql: ${TABLE}.claimlnimage_num ;;
   }
 
   dimension: claimlnmaster_id {
-    type: number
     hidden: yes
+    type: number
     sql: ${TABLE}.claimlnmaster_id ;;
   }
 
@@ -209,8 +209,8 @@ view: claim_control {
   }
 
   dimension: claimoffice_id {
-    type: number
     hidden: yes
+    type: number
     sql: ${TABLE}.claimoffice_id ;;
   }
 
@@ -227,14 +227,14 @@ view: claim_control {
   # }
 
   dimension: claimreportedby_id {
-    type: number
     hidden: yes
+    type: number
     sql: ${TABLE}.claimreportedby_id ;;
   }
 
   dimension: claimreportedbymethod_id {
-    type: number
     hidden: yes
+    type: number
     sql: ${TABLE}.claimreportedbymethod_id ;;
   }
 

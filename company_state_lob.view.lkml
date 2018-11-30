@@ -4,7 +4,7 @@ view: company_state_lob {
   dimension: commercial_name1 {
     label: "Name"
     type: string
-    sql: ${TABLE}.commercial_name1 ;;
+    sql: case when 1=0 then ${TABLE}.commercial_name1 else 'Looker Insurance' end ;;
   }
 
   dimension: company_id {

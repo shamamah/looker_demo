@@ -313,6 +313,14 @@ view: dt_summarized_claim_level_financials {
     sql: ${TABLE}.other_recovery ;;
   }
 
+
+#   measure: loss_ratio  {
+#     type: number
+#     value_format_name: percent_1
+#     label: "Loss Ratio"
+#     sql: (${sum_alae_paid} + ${sum_alae_reserve} + ${sum_expense_paid} + ${sum_expense_reserve} + ${sum_loss_paid} + ${sum_loss_reserve}) / ${policy_image.premium_chg_written_sum} ;;
+#   }
+
   measure: count {
     hidden: yes
     type: count
