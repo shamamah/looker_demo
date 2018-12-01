@@ -1,4 +1,4 @@
-view: dt_summarized_claim_level_financials {
+view: dt_summarized_claim_financials {
   derived_table: {
     sql: select v.claimcontrol_id
         ,sum(v.initial_indemnity_reserve) as initial_indemnity_reserve

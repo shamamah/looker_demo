@@ -55,22 +55,22 @@ view: policy_image_active {
     sql: ${TABLE}.premium_fullterm ;;
   }
 
-  measure: premium_written_sum {
-    label: "Written Premium"
-    type: sum_distinct
-    value_format_name: usd
-    sql_distinct_key: ${compound_primary_key} ;;
-    sql: ${premium_written} ;;
-  }
+#   measure: premium_written_sum {
+#     label: "Written Premium"
+#     type: sum_distinct
+#     value_format_name: usd
+#     sql_distinct_key: ${compound_primary_key} ;;
+#     sql: ${premium_written} ;;
+#   }
 
-  measure: premium_fullterm_sum {
-    label: "Fullterm Premium"
-    type: sum_distinct
-    value_format_name: usd
-    drill_fields: [detail_count*]
-    sql_distinct_key: ${compound_primary_key} ;;
-    sql: ${premium_fullterm} ;;
-  }
+#   measure: premium_fullterm_sum {
+#     label: "Fullterm Premium"
+#     type: sum_distinct
+#     value_format_name: usd
+#     drill_fields: [detail_count*]
+#     sql_distinct_key: ${compound_primary_key} ;;
+#     sql: ${premium_fullterm} ;;
+#   }
 
   set: detail_count {
     fields: [policy_image.policy, dt_policy_holder_names.display_name, policy_image_active.premium_written_sum]

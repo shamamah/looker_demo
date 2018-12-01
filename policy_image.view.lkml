@@ -2,10 +2,10 @@ view: policy_image {
   sql_table_name: dbo.PolicyImage ;;
 
   dimension: compound_primary_key {
-    type: string
     primary_key: yes
     hidden: yes
-    sql: CONCAT(${policy_id},${policyimage_num}) ;;
+    type: string
+    sql: CONCAT(${policy_id},' ',${policyimage_num}) ;;
   }
 
   dimension: policy_id {
@@ -156,6 +156,7 @@ view: policy_image {
 
   dimension: premium_written {
     label: "Written Premium"
+    hidden: yes
     type: number
     value_format_name: usd
     sql: ${TABLE}.premium_written ;;
@@ -163,6 +164,7 @@ view: policy_image {
 
   dimension: premium_fullterm {
     label: "Fullterm Premium"
+    hidden: yes
     type: number
     value_format_name: usd
     sql: ${TABLE}.premium_fullterm ;;
@@ -170,6 +172,7 @@ view: policy_image {
 
   dimension: premium_chg_written {
     label: "Written Premium Change"
+    hidden: yes
     type: number
     sql: ${TABLE}.premium_chg_written ;;
     value_format_name: usd
@@ -177,6 +180,7 @@ view: policy_image {
 
   dimension: premium_chg_fullterm {
     label: "Fullterm Premium Change"
+    hidden: yes
     type: number
     sql: ${TABLE}.premium_chg_fullterm ;;
     value_format_name: usd
@@ -210,7 +214,14 @@ view: policy_image {
     value_format_name: usd
   }
 
-#   measure: avg_days_to_convert {
+  measure: premium_chg_fullterm_sum {
+    label: "Fullterm Premium"
+    type: sum
+    sql: ${TABLE}.premium_chg_fullterm ;;
+    value_format_name: usd
+  }
+
+  #   measure: avg_days_to_convert {
 #     label: "Average Days to Convert"
 #     hidden: yes
 #     type: average_distinct

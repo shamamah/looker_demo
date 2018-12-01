@@ -92,14 +92,14 @@ explore: policy {
 #       and ${policy_image.policyimage_num} = ${policy_level.policyimage_num};;
 #   }
 
-#   join: policy_underwriting {
-#     view_label: "Policy Underwriting"
-#     type:  inner
-#     relationship: many_to_many
-#     fields: [policy_underwriting.underwriting_response]
-#     sql_on: ${policy_image.policy_id} = ${policy_underwriting.policy_id}
-#       and ${policy_image.policyimage_num} = ${policy_underwriting.policyimage_num};;
-#   }
+#     join: policy_underwriting {
+#       view_label: "Policy Image"
+#       type:  inner
+#       relationship: one_to_many
+#       fields: [policy_underwriting.underwriting_response]
+#       sql_on: ${policy_image.policy_id} = ${policy_underwriting.policy_id}
+#         and ${policy_image.policyimage_num} = ${policy_underwriting.policyimage_num};;
+#     }
 
 #   join:  policy_underwriting_code {
 #     view_label: "Policy Image"
@@ -198,6 +198,35 @@ explore: policy {
       relationship: one_to_one
     }
 
+    #
+    # COVERAGE SECTION
+    #
+
+    join: policy_coverage {
+      view_label: "Coverage"
+      type: left_outer
+      sql_on: ${policy_image.policy_id} = ${policy_coverage.policy_id}
+              AND ${policy_image.policyimage_num} = ${policy_coverage.policyimage_num}
+              AND ${policy_location.location_num} = ${policy_coverage.unit_num}
+              AND ${policy_coverage.detailstatuscode_id} = 1 ;;
+      relationship: one_to_many
+    }
+
+    join: policy_coverage_code {
+      view_label: "Coverage"
+      type: inner
+      sql_on: ${policy_coverage.coveragecode_id} = ${policy_coverage_code.coveragecode_id} ;;
+      relationship: one_to_one
+    }
+
+    join: policy_coverage_limit {
+      view_label: "Coverage"
+      type: inner
+      sql_on: ${policy_coverage.coveragelimit_id} = ${policy_coverage_limit.coveragelimit_id} ;;
+      relationship: one_to_one
+    }
+
+
 
     #
     # CLAIMS SECTION
@@ -214,7 +243,7 @@ explore: policy {
 
     join: v_claim_detail_claimant {
       view_label: "Claimant"
-      type: inner
+      type: left_outer
       relationship: one_to_many
       sql_on: ${claim_control.claimcontrol_id} = ${v_claim_detail_claimant.claimcontrol_id} ;;
       fields: [v_claim_detail_claimant.claimcontrol_id, v_claim_detail_claimant.claimant_num, v_claim_detail_claimant.display_name,
@@ -235,127 +264,6 @@ explore: policy {
         v_claim_detail_feature.sum_indemnity_reserve, v_claim_detail_feature.sum_indemnity_paid, v_claim_detail_feature.sum_expense_reserve,
         v_claim_detail_feature.sum_expense_paid, v_claim_detail_feature.sum_alae_reserve, v_claim_detail_feature.sum_alae_paid]
     }
-
-#   join:  additional_interest {
-#     view_label: "Additional Interest"
-#     type: inner
-#     relationship: many_to_many
-#     sql_on: ${policy_image.policy_id} = ${additional_interest.policy_id}
-#       and ${policy_image.policyimage_num} = ${additional_interest.policyimage_num} ;;
-#   }
-#
-#   join: additional_interest_list_name_link {
-#     view_label: "Additional Interest"
-#     type: inner
-#     relationship: one_to_one
-#     sql_on: ${additional_interest.additionalinterestlist_id} = ${additional_interest_list_name_link.additionalinterestlist_id} ;;
-#   }
-#
-#   join: name {
-#     view_label: "Additional Interest"
-#     type: inner
-#     relationship: one_to_one
-#     sql_on: ${additional_interest_list_name_link.nameaddresssource_id} = ${name.nameaddresssource_id}
-#       and ${additional_interest_list_name_link.name_id} = ${name.name_id};;
-#   }
-
-#   # - join: location_name_link
-#   #   type: inner
-#   #   sql_on: ${location.policy_id} = ${location_name_link.policy_id} AND ${location.policyimage_num} = ${location_name_link.policyimage_num} AND ${location.location_num} = ${location_name_link.location_num}
-#   #   relationship: one_to_many
-#
-#   # - join: location_name
-#   #   type: inner
-#   #   sql_on: ${location_name_link.name_id} = ${location_name.name_id}
-#   #   relationship: one_to_one
-#
-#   join: location_address_link {
-#     type: inner
-#     sql_on: ${location.policy_id} = ${location_address_link.policy_id} AND ${location.policyimage_num} = ${location_address_link.policyimage_num} AND ${location.location_num} = ${location_address_link.location_num} ;;
-#     relationship: one_to_many
-#   }
-#
-#   join: coverage {
-#     view_label: "Coverage"
-#     type: left_outer
-#     sql_on: ${policy_image.policy_id} = ${coverage.policy_id} AND ${policy_image.policyimage_num} = ${coverage.policyimage_num} AND ${location.location_num} = ${coverage.unit_num} AND ${coverage.detailstatuscode_id} = 1 ;;
-#     relationship: one_to_many
-#   }
-#
-#   join: coverage_code {
-#     view_label: "Coverage"
-#     type: inner
-#     sql_on: ${coverage.coveragecode_id} = ${coverage_code.coveragecode_id} ;;
-#     relationship: one_to_one
-#   }
-#
-#   join: coverage_limit {
-#     view_label: "Coverage"
-#     type: inner
-#     sql_on: ${coverage.coveragelimit_id} = ${coverage_limit.coveragelimit_id} ;;
-#     relationship: one_to_one
-#   }
-#
-#   join: v_billing_cash {
-#     view_label: "Billing"
-#     type: inner
-#     relationship: many_to_one
-#     sql_on: ${v_billing_cash.policy_id} = ${policy.policy_id} ;;
-#   }
-#
-#   join:  billing_cash_type {
-#     view_label: "Billing"
-#     type:  inner
-#     relationship: one_to_one
-#     sql_on: ${v_billing_cash.billingcashtype_id} = ${billing_cash_type.billingcashtype_id} ;;
-#   }
-#
-#   join:  billing_reason {
-#     view_label: "Billing"
-#     type:  inner
-#     relationship: one_to_one
-#     sql_on: ${v_billing_cash.billingreason_id} = ${billing_reason.billingreason_id}
-#       and ${v_billing_cash.billingreason_id} <> 0 ;;
-#   }
-#
-#   join: v_billing_cash_detail {
-#     view_label: "Billing - Detail"
-#     type: inner
-#     relationship: many_to_many
-#     sql_on: ${v_billing_cash.policy_id} = ${v_billing_cash_detail.policy_id}
-#       AND ${v_billing_cash.billingcash_num} = ${v_billing_cash_detail.billingcash_num}
-#        ;;
-#   }
-#
-#   join:  v_billing_account_detail {
-#     view_label: "Policy"
-#     type: inner
-#     relationship:one_to_one
-#     sql_on: ${v_billing_account_detail.policy_id}  = ${policy.policy_id};;
-#   }
-#
-#   join: billing_payplan_type {
-#     view_label: "Policy"
-#     type: inner
-#     relationship: one_to_one
-#     sql_on: ${billing_payplan_type.billingpayplantype_id} = ${v_billing_account_detail.billingpayplantype_id} ;;
-#   }
-#
-#   join: v_billing_futures {
-#     view_label: "Billing - Future"
-#     type: inner
-#     relationship: many_to_many
-#     sql_on: ${v_billing_cash.policy_id} = ${v_billing_futures.policy_id}
-#       AND ${v_billing_futures.renewal_ver} <> ''
-#        ;;
-#   }
-#
-#   join: users_non_cea {
-#     view_label: "Policy Image"
-#     type: inner
-#     sql_on: ${policy_image.trans_users_id} = ${users_non_cea.users_id} ;;
-#     relationship: one_to_one
-#   }
 
   }
 
@@ -382,11 +290,11 @@ explore: policy {
       #     sql_on: ${claim_type.claimtype_id} = ${claim_control.claim_type_id} ;;
       #   }
 
-      join: dt_summarized_claim_level_financials {
+      join: dt_summarized_claim_financials {
         view_label: "Claim Financials (Summarized)"
         type: left_outer
         relationship: one_to_one
-        sql_on: ${claim_control.claimcontrol_id} = ${dt_summarized_claim_level_financials.claimcontrol_id} ;;
+        sql_on: ${claim_control.claimcontrol_id} = ${dt_summarized_claim_financials.claimcontrol_id} ;;
       }
 
       join: dt_is_claim_litigated_represented {
