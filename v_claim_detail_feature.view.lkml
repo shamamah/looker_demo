@@ -364,7 +364,7 @@ view: v_claim_detail_feature {
     value_format_name: usd
   }
 
-  measure: sum_total_indemnity_incurred{
+  measure: sum_total_indemnity_incurred {
     view_label: "Claim Financials (Current)"
     type: number
     #label: "Total Indemnity Incurred"
@@ -458,12 +458,16 @@ view: v_claim_detail_feature {
     value_format_name: usd
   }
 
-#   measure: loss_ratio  {
-#     type: number
-#     value_format: "#\%"
-#     label: "Loss Ratio2"
-#     sql:  (${sum_alae_paid} + ${sum_alae_reserve} + ${sum_expense_paid} + ${sum_expense_reserve} + ${sum_indemnity_paid} + ${sum_indemnity_reserve}) / ${policy_image.premium_chg_written_sum} ;;
-#   }
+  measure: sum_total_reserve_paid {
+    view_label: "Claim Financials (Current)"
+    hidden: no
+    type: number
+    label: "Total Reserve & Paid**"
+    sql: ${sum_indemnity_paid} + ${sum_indemnity_reserve}
+      + ${sum_alae_reserve} + ${sum_alae_paid}
+      + ${sum_expense_reserve} + ${sum_expense_paid} ;;
+    value_format_name: usd
+  }
 
   set: feature_stats {
     fields: [

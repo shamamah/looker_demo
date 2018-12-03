@@ -262,7 +262,8 @@ explore: policy {
         v_claim_detail_feature.subcoverage_dscr, v_claim_detail_feature.status_dscr, v_claim_detail_feature.denied,
         v_claim_detail_feature.indemnity_paid, v_claim_detail_feature.expense_paid, v_claim_detail_feature.count,
         v_claim_detail_feature.sum_indemnity_reserve, v_claim_detail_feature.sum_indemnity_paid, v_claim_detail_feature.sum_expense_reserve,
-        v_claim_detail_feature.sum_expense_paid, v_claim_detail_feature.sum_alae_reserve, v_claim_detail_feature.sum_alae_paid]
+        v_claim_detail_feature.sum_expense_paid, v_claim_detail_feature.sum_alae_reserve, v_claim_detail_feature.sum_alae_paid,
+        sum_total_reserve_paid]
     }
 
   }

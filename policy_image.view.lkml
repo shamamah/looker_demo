@@ -221,7 +221,20 @@ view: policy_image {
     value_format_name: usd
   }
 
-  #   measure: avg_days_to_convert {
+  measure: loss_ratio  {
+    type: number
+    value_format_name: percent_1
+    label: "Loss Ratio"
+    sql:  case when ${policy_image.premium_chg_written_sum} > 0
+      then ${v_claim_detail_feature.sum_total_reserve_paid} / ${policy_image.premium_chg_written_sum}
+      else 0 end ;;
+#     filters: {
+#       field: premium_chg_written
+#       value: ">0"
+#     }
+  }
+
+#   measure: avg_days_to_convert {
 #     label: "Average Days to Convert"
 #     hidden: yes
 #     type: average_distinct
