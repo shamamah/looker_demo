@@ -13,11 +13,12 @@ view: policy_coverage_limit {
     sql: ${TABLE}.deductible_dscr ;;
   }
 
-  dimension: dscr {
-    label: "Limit Description"
-    type: string
-    sql: case when ${coveragelimit_id} = '0' then ${policy_coverage.manual_limit_amount} else  ${dscr_raw} end;;
-  }
+#   dimension: dscr {
+#     label: "Limit Description"
+#     type: string
+#     sql: case when ${coveragelimit_id} = '0' then ${policy_coverage.manual_limit_amount} else  ${dscr_raw} end;;
+#   }
+
   dimension: dscr_raw {
     label: "Limit Description Raw"
     hidden: yes

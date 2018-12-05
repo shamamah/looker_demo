@@ -43,7 +43,7 @@ explore: policy {
 
     join: policy_image {
       view_label: "Policy Image"
-      type: left_outer
+      type: inner
       relationship: one_to_many
       sql_on: ${policy.policy_id} = ${policy_image.policy_id} ;;
     }
@@ -153,7 +153,6 @@ explore: policy {
       sql_on: ${policy_holder_name.sex_id} = ${policy_holder_gender.sex_id} ;;
     }
 
-
     join: policy_location {
       view_label: "Location"
       type: left_outer
@@ -163,19 +162,34 @@ explore: policy {
       relationship: one_to_many
     }
 
+    #
+    # L     OOO   CCCC
+    # L    O   O C
+    # L    O   O C
+    # LLLL  OOO   CCCC
+    #
+
+    join: policy_location_address_link {
+      type: inner
+      sql_on: ${policy_location.policy_id} = ${policy_location_address_link.policy_id}
+            AND ${policy_location.policyimage_num} = ${policy_location_address_link.policyimage_num}
+            AND ${policy_location.location_num} = ${policy_location_address_link.location_num} ;;
+      relationship: one_to_many
+    }
+
+    join: policy_location_address {
+      view_label: "Location"
+      type: inner
+      sql_on: ${policy_location_address_link.address_id} = ${policy_location_address.address_id} ;;
+      relationship: one_to_one
+    }
+
     join: policy_construction_type {
       view_label: "Location"
       type: inner
       sql_on: ${policy_location.contructiontype_id} = ${policy_construction_type.constructiontype_id} ;;
       relationship: one_to_one
     }
-
-#   join: v_program_type {
-#     view_label: "Location"
-#     type: inner
-#     sql_on: ${location.programtype_id} = ${v_program_type.programtype_id} ;;
-#     relationship: one_to_one
-#   }
 
     join: policy_roof_type {
       view_label: "Location"
@@ -199,7 +213,10 @@ explore: policy {
     }
 
     #
-    # COVERAGE SECTION
+    #  CCC  OOO  V     V
+    # C    O   O  V   V
+    # C    O   O   V V
+    #  ccc  OOO     V
     #
 
     join: policy_coverage {
@@ -212,18 +229,30 @@ explore: policy {
       relationship: one_to_many
     }
 
+    join: dt_policy_property_exposure {
+      view_label: "Coverage"
+      type: left_outer
+      relationship: one_to_many
+      sql_on: ${policy.policy_id} = ${dt_policy_property_exposure.policy_id}
+              and ${policy.activeimage_num} = ${dt_policy_property_exposure.policyimage_num}
+              and ${policy_location.location_num} = ${dt_policy_property_exposure.unit_num}
+              and ${policy_coverage_code.coveragecode} = ${dt_policy_property_exposure.coveragecode}
+              and ${dt_policy_property_exposure.detailstatuscode_id} = 1 ;;
+    }
+
     join: policy_coverage_code {
       view_label: "Coverage"
-      type: inner
-      sql_on: ${policy_coverage.coveragecode_id} = ${policy_coverage_code.coveragecode_id} ;;
-      relationship: one_to_one
+      type: left_outer
+      sql_on: ${policy_coverage.coveragecode_id} = ${policy_coverage_code.coveragecode_id}
+        --and ${policy_coverage_code.coveragecode} IN ('loca','locb','locc','locd') ;;
+      relationship: one_to_many
     }
 
     join: policy_coverage_limit {
       view_label: "Coverage"
-      type: inner
+      type: left_outer
       sql_on: ${policy_coverage.coveragelimit_id} = ${policy_coverage_limit.coveragelimit_id} ;;
-      relationship: one_to_one
+      relationship: one_to_many
     }
 
 

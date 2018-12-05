@@ -16,6 +16,7 @@ view: dt_policy_holder_names {
   }
 
   dimension: policy_id {
+    primary_key: yes
     hidden: yes
     type: number
     sql: ${TABLE}.policy_id ;;

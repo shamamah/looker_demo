@@ -8,16 +8,17 @@ view: policy_coverage_code {
   }
 
   dimension: coveragecode_id {
+    primary_key: yes
     hidden: yes
     type: number
     sql: ${TABLE}.coveragecode_id ;;
   }
 
-  dimension: coveragetype {
-    label: "Type"
-    type: string
-    sql: ${TABLE}.coveragetype ;;
-  }
+#   dimension: coveragetype {
+#     label: "Type"
+#     type: string
+#     sql: ${TABLE}.coveragetype ;;
+#   }
 
   dimension: dscr {
     label: "Coverage Description"
