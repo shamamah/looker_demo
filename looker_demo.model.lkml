@@ -56,6 +56,13 @@ explore: policy {
         ${policy.activeimage_num} = ${policy_image_active.policyimage_num};;
     }
 
+    join: dt_agency {
+      view_label: "Agency"
+      type: inner
+      relationship: one_to_many
+      sql_on: ${policy_image.agency_id} = ${dt_agency.agency_id} ;;
+    }
+
 #   join: billing_invoice {
 #     view_label: "Policy"
 #     type: inner
@@ -295,8 +302,30 @@ explore: policy {
         sum_total_reserve_paid]
     }
 
-  }
+    #
+    #  V       V EEEEEE H    H
+    #   V     V  E      H    H
+    #    V   V   EEEE   HHHHHH
+    #     V V    E      H    H
+    #      V     EEEEEE H    H
 
+    join: policy_vehicle {
+      view_label: "Vehicle"
+      type: left_outer
+      sql_on: ${policy_image.policy_id} = ${policy_vehicle.policy_id}
+              AND ${policy_image.policyimage_num} = ${policy_vehicle.policyimage_num}
+              AND ${policy_vehicle.detailstatuscode_id} = 1 ;;
+      sql_where: ${policy_vehicle.year} IS NOT NULL ;;
+      relationship: one_to_many
+    }
+
+    join: policy_vehicle_body_type {
+      view_label: "Vehicle"
+      type: left_outer
+      relationship: one_to_many
+      sql_on: ${policy_vehicle_body_type.bodytype_id} = ${policy_vehicle.bodytype_id} ;;
+    }
+  }
 
 
   explore: claim_control {

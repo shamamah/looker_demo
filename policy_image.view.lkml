@@ -212,6 +212,7 @@ view: policy_image {
     type: sum
     sql: ${premium_chg_written} ;;
     value_format_name: usd
+    drill_fields: [premium_drill*]
   }
 
   measure: premium_chg_fullterm_sum {
@@ -232,7 +233,7 @@ view: policy_image {
 #       field: premium_chg_written
 #       value: ">0"
 #     }
-  }
+    }
 
 #   measure: avg_days_to_convert {
 #     label: "Average Days to Convert"
@@ -243,7 +244,28 @@ view: policy_image {
 #     sql: DateDiff(d,${added_date},${trans_date}) ;;
 #   }
 
-  measure: count {
-    type: count
+    measure: count {
+      type: count
+    }
+
+    set: premium_drill {
+      fields: [policy.current_policy,
+        company_state_lob.lobname,
+        dt_policy_holder_names.policy_holder_names,
+        policy_current_status.description,
+        policy.first_eff_date,
+        policy_image_active.eff_date,
+        policy_image_active.exp_date,
+        policy_location.territory_num,
+        policy_location.year_built,
+        policy_location.square_feet,
+        #policy_number_of_stories.dscr,  [BUG]
+        policy_construction_type.dscr,
+        policy_location.display_address,
+        policy_image.premium_chg_written_sum,
+        dt_policy_property_exposure.exposure
+      ]
+    }
+
+
   }
-}

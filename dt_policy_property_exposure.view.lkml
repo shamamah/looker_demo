@@ -66,6 +66,20 @@ view: dt_policy_property_exposure {
     type: sum
     sql: ${dim_exposure} ;;
     value_format_name: usd
+    drill_fields: [exposure_drill*]
+  }
+
+  set: exposure_drill {
+    fields: [policy.current_policy,
+              company_state_lob.lobname,
+              dt_policy_holder_names.policy_holder_names,
+              policy_current_status.description,
+              policy.first_eff_date,
+              policy_image_active.eff_date,
+              policy_image_active.exp_date,
+              policy_image.premium_chg_written_sum,
+              dt_policy_property_exposure.exposure
+      ]
   }
 
 }
